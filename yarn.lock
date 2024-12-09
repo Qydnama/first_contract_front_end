@@ -544,6 +544,13 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.28.1.tgz#4dff5c4259ebe6c5b4a8f2c5bc3829b7a8447ff0"
   integrity sha512-ZvK2jBafvttJjoIdKm/Q/Bh7IJ1Ose9IBOwpOXcOvW3ikGTQGmKDgxTC6oCAzW6PynbkKP8+um1du81XJHZ0JA==
 
+"@ton/core@^0.59.0":
+  version "0.59.0"
+  resolved "https://registry.yarnpkg.com/@ton/core/-/core-0.59.0.tgz#58da9fcaa58e5a0c705b63baf1e86cab6e196689"
+  integrity sha512-LSIkGst7BoY7fMWshejzcH0UJnoW21JGlRrW0ch+6A7Xb/7EuekxgdKym7fHxcry6OIf6FoeFg97lJ960N/Ghg==
+  dependencies:
+    symbol.inspect "1.0.1"
+
 "@tonconnect/isomorphic-eventsource@^0.0.2":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@tonconnect/isomorphic-eventsource/-/isomorphic-eventsource-0.0.2.tgz#e58c44cf9953e090f2c35da9a638946ddb614be5"

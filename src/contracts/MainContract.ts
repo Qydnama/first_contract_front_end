@@ -1,12 +1,21 @@
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from '@ton/core';
+import {
+    Address,
+    beginCell,
+    Cell,
+    Contract,
+    contractAddress,
+    SendMode,
+    ContractProvider,
+    Sender,
+} from "ton-core";
 
 export type MainContractConfig = {
     number: number;
     address: Address;
     owner_address: Address;
-}
+};
 
-export function MainContractConfigToCell(config: MainContractConfig): Cell {
+export function mainContractConfigToCell(config: MainContractConfig) {
     return beginCell()
         .storeUint(config.number, 32)
         .storeAddress(config.address)
@@ -17,15 +26,15 @@ export function MainContractConfigToCell(config: MainContractConfig): Cell {
 export class MainContract implements Contract {
     constructor(
         readonly address: Address,
-        readonly init?: { code: Cell; data: Cell}
+        readonly init?: { code: Cell; data: Cell }
     ) {}
 
     static createFromConfig(
-        config: MainContractConfig, 
-        code: Cell, 
+        config: MainContractConfig,
+        code: Cell,
         workchain = 0
     ) {
-        const data = MainContractConfigToCell(config);
+        const data = mainContractConfigToCell(config);
         const init = { code, data };
         const address = contractAddress(workchain, init);
 
@@ -38,44 +47,46 @@ export class MainContract implements Contract {
         value: bigint,
         increment_by: number
     ) {
-
         const msg_body = beginCell()
-            .storeUint(1, 32) // OP code
-            .storeUint(increment_by, 32) // increment_by value
+            .storeUint(1, 32)
+            .storeUint(increment_by, 32)
             .endCell();
-
         await provider.internal(sender, {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
-            body: msg_body
-        })
+            body: msg_body,
+        });
     }
 
     async getData(provider: ContractProvider) {
         const { stack } = await provider.get("get_contract_storage_data", []);
+
         return {
             number: stack.readNumber(),
             recent_sender: stack.readAddress(),
-            owner_address: stack.readAddress()
-        }
+            owner_address: stack.readAddress(),
+        };
     }
 
     async getBalance(provider: ContractProvider) {
         const { stack } = await provider.get("balance", []);
+
         return {
-            number: stack.readNumber()
-        }
+            balance: stack.readNumber(),
+        };
     }
 
-    async sendDeposit(provider: ContractProvider, sender: Sender, value: bigint) {
-        const msg_body = beginCell()
-            .storeUint(2, 32) //OP code
-            .endCell();
+    async sendDeposit(
+        provider: ContractProvider,
+        sender: Sender,
+        value: bigint
+    ) {
+        const msg_body = beginCell().storeUint(2, 32).endCell();
 
         await provider.internal(sender, {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
-            body:msg_body,
+            body: msg_body,
         });
     }
 
@@ -89,7 +100,7 @@ export class MainContract implements Contract {
         await provider.internal(sender, {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
-            body: msg_body
+            body: msg_body,
         });
     }
 
@@ -98,24 +109,24 @@ export class MainContract implements Contract {
         sender: Sender,
         value: bigint,
         amount: bigint
-        ) {
+    ) {
         const msg_body = beginCell()
-          .storeUint(3, 32) // OP code
-          .storeCoins(amount)
-          .endCell();
-    
+            .storeUint(3, 32) // OP code
+            .storeCoins(amount)
+            .endCell();
+        
         await provider.internal(sender, {
-          value,
-          sendMode: SendMode.PAY_GAS_SEPARATELY,
-          body: msg_body,
-        });
+            value,
+            sendMode: SendMode.PAY_GAS_SEPARATELY,
+            body: msg_body,
+        })
     }
 
     async sendDeploy(provider: ContractProvider, via: Sender, value: bigint) {
         await provider.internal(via, {
             value,
             sendMode: SendMode.PAY_GAS_SEPARATELY,
-            body: beginCell().endCell()
-        });
+            body: beginCell().endCell(),
+        })
     }
 }
